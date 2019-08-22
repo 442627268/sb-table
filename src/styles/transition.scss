@@ -1,0 +1,64 @@
+// global transition css
+
+/* fade */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.28s;
+}
+
+.fade-enter,
+.fade-leave-active {
+  opacity: 0;
+}
+
+/* fade-transform */
+.fade-transform-leave-active,
+.fade-transform-enter-active {
+  transition: all .5s;
+}
+
+.fade-transform-enter {
+  opacity: 0;
+  transform: translateX(-30px);
+}
+
+.fade-transform-leave-to {
+  opacity: 0;
+  transform: translateX(30px);
+}
+
+/* breadcrumb transition */
+.breadcrumb-enter-active,
+.breadcrumb-leave-active {
+  transition: all .5s;
+}
+
+.breadcrumb-enter,
+.breadcrumb-leave-active {
+  opacity: 0;
+  transform: translateX(20px);
+}
+
+.breadcrumb-move {
+  transition: all .5s;
+}
+
+.breadcrumb-leave-active {
+  position: absolute;
+}
+
+// 右侧滑出过度
+.fade-in-right-enter-active,
+.fade-in-right-leave-active {
+  opacity:1;
+  transform:scale(1,1);
+  transition:opacity .3s ease;
+  transition:transform .3s linear,opacity .3s ease;
+  transition:transform .3s linear,opacity .3s ease;
+  transform-origin: top right;
+}
+.fade-in-right-enter,
+.fade-in-right-leave-active {
+  opacity:0;
+  transform:scale(0,1)
+}

@@ -1,0 +1,50 @@
+.ui-mgr-31{
+  margin-right: 31px;
+}
+.pharmacy{
+  //.el-form-item__content{
+  //  overflow: hidden;
+  //  white-space: nowrap;
+  //  text-overflow: ellipsis;
+  //}
+  .el-form-item--mini.el-form-item, .el-form-item--small.el-form-item{
+    margin-bottom: 18px;
+  }
+  .left{
+    border:1px solid $base-border-color;
+    border-right:none;
+    min-width: 240px;
+}
+  .info-div{
+    padding:10px;
+    box-shadow:0px 2px 10px 0px #dbdbdb;
+    color: #5d6d7e;
+    .code-info{
+      padding-bottom: 5px;
+      border-bottom: 1px solid #32c081;
+  }
+    .notice{
+      .el-input__inner{
+        color: #35495e;
+    }
+  }
+    .depList {
+      padding: 15px;
+  }
+    .el-input--small .el-input__inner{
+      height: 32px !important;
+  }
+    .el-input--prefix .el-input__inner{
+      padding-left: 15px;
+  }
+    .el-input__prefix {
+      right: 5px;
+      left: auto;
+      i {
+        &:before {
+          content: "\E642"
+      }
+    }
+  }
+}
+}

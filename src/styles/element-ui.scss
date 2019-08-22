@@ -1,0 +1,143 @@
+// cover some element-ui styles
+
+.el-breadcrumb__inner,
+.el-breadcrumb__inner a {
+  font-weight: 400 !important;
+}
+
+.el-upload {
+  input[type="file"] {
+    display: none !important;
+  }
+}
+
+.el-upload__input {
+  display: none;
+}
+
+.cell {
+  .el-tag {
+    margin-right: 0px;
+  }
+}
+
+.small-padding {
+  .cell {
+    padding-left: 5px;
+    padding-right: 5px;
+  }
+}
+
+.fixed-width {
+  .el-button--mini {
+    padding: 7px 10px;
+    width: 60px;
+  }
+}
+
+.status-col {
+  .cell {
+    padding: 0 10px;
+    text-align: center;
+
+    .el-tag {
+      margin-right: 0px;
+    }
+  }
+}
+
+// to fixed https://github.com/ElemeFE/element/issues/2461
+.el-dialog {
+  transform: none;
+  left: 0;
+  position: relative;
+  margin: 0 auto;
+}
+
+// refine element ui upload
+.upload-container {
+  .el-upload {
+    width: 100%;
+
+    .el-upload-dragger {
+      width: 100%;
+      height: 200px;
+    }
+  }
+}
+
+// dropdown
+.el-dropdown-menu {
+  a {
+    display: block
+  }
+}
+
+// fix date-picker ui bug in filter-item
+.el-range-editor.el-input__inner {
+  display: inline-flex !important;
+}
+.el-submenu .el-menu-item,.el-menu-item,.el-submenu__title{
+  height: 36px;
+  line-height: 36px;
+}
+.el-dropdown-menu{
+  .el-dropdown-menu__item{
+    color: #8ba4af;
+  }
+}
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-transition-delay: 99999s;
+  -webkit-transition: color 99999s ease-out, background-color 99999s ease-out;
+}
+.el-table th{
+  color: #35495E;
+  font-weight: bold;
+  background: #EEF1F7;
+}
+.el-table--small th{
+  padding:5px 0;
+}
+.el-table td{
+  padding:4px 0;
+}
+  //#DEE9EB
+.el-table--enable-row-hover .el-table__body tr:hover>td {background-color:#E1F6EC;}
+//.el-table tr:nth-child(odd){
+//  background-color: #F5FCF8;
+//}
+.el-table--striped .el-table__body tr.el-table__row--striped.current-row td, .el-table__body tr.current-row>td, .el-table__body tr.hover-row.current-row>td, .el-table__body tr.hover-row.el-table__row--striped.current-row>td, .el-table__body tr.hover-row.el-table__row--striped>td, .el-table__body tr.hover-row>td{
+
+}
+.el-table__body-wrapper{
+  flex:1;
+  overflow: auto;
+}
+.el-table{
+  flex-direction: column;
+  font-size: 14px;
+  flex: 1;
+  display: flex;
+}
+.el-table th div.el-checkbox-group{
+  line-height: 1;
+  padding-left: 0;
+  padding-right: 0;
+  display: block;
+}
+.el-dialog__body{
+  padding:20px 15px;
+}
+// 表格排序样式
+.el-table .caret-wrapper {
+  height: 20px;
+  .sort-caret.ascending {
+    top: -2px;
+  }
+  .sort-caret.descending {
+    bottom: -2px;
+  }
+}
