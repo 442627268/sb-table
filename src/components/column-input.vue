@@ -20,7 +20,7 @@
 </template>
 
 <script>
-  import index from './mixin'
+  import index from './index'
 
   export default {
     name: "column-input",
@@ -28,7 +28,11 @@
     props: {
       value: {
         type: [String, Number]
-      }
+      },
+        canEditCell:{
+            type:Boolean,
+            default:false
+        }
     },
     data() {
       return {}
@@ -37,12 +41,14 @@
     },
     methods: {
       dbEdit(flag) {
-        this.isEdit = flag;
-        if (flag) {
-          setTimeout(()=>{
-            this.$refs.input.focus();
-          },300);
-        }
+          if(this.canEditCell){
+              this.isEdit = flag;
+              if (flag) {
+                  setTimeout(()=>{
+                      this.$refs.input.focus();
+                  },300);
+              }
+          }
       },
     },
     watch:{

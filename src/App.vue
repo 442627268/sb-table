@@ -15,12 +15,11 @@
             <el-table-column
                     prop="drugName"
                     label="药品名称"
-
                     width="180">
                 <template slot-scope="scope">
-                    <column-table :key="scope.$index" @rowEnter="(row,cellback)=>rowEnter(row,scope.$index,cellback)"
+                    <column-table :isColumn="isColumn" :key="scope.$index" @rowEnter="(row,cellback)=>rowEnter(row,scope.$index,cellback)"
                                   @infinitescroll="infinitescroll" :column="column" :columnData="columnData"
-                                  v-model="scope.row.drugName"></column-table>
+                                  v-model="scope.row.drugName" :canEditCell="canEditCell"></column-table>
                 </template>
             </el-table-column>
             <el-table-column
@@ -30,7 +29,7 @@
                     label="药品规格">
                 <template slot-scope="scope">
                     <column-input :key="scope.$index" @editCell="(val)=>editCell(val,scope.$index)"
-                                  v-model="scope.row.drugSpec"></column-input>
+                                  v-model="scope.row.drugSpec" :canEditCell="false"></column-input>
                 </template>
             </el-table-column>
             <el-table-column
@@ -40,7 +39,7 @@
                     label="列编辑">
                 <template slot-scope="scope">
                     <!--isColumn 开启列编辑 :isColumn="7"-->
-                    <column-input :key="scope.$index" :isColumn="isColumn" v-model="scope.row.drugCountryName"></column-input>
+                    <column-input :key="scope.$index" :isColumn="isColumn" v-model="scope.row.drugCountryName" :canEditCell="canEditCell"></column-input>
                 </template>
             </el-table-column>
             <el-table-column
@@ -49,7 +48,7 @@
                     show-overflow-tooltip
                     width="260">
                 <template slot-scope="scope">
-                    <column-date :key="scope.$index" v-model="scope.row.perival"></column-date>
+                    <column-date :key="scope.$index" v-model="scope.row.perival" :canEditCell="true"></column-date>
                 </template>
             </el-table-column>
             <el-table-column
@@ -60,7 +59,7 @@
                 <template slot-scope="scope">
                     <column-select :key="scope.$index" :defaultItem="{value:'code',label:'tname'}" :selectData="options"
                                    :defaultStr="scope.row.appearanceStr"
-                                   v-model="scope.row.appearance"></column-select>
+                                   v-model="scope.row.appearance" :canEditCell="canEditCell"></column-select>
                 </template>
             </el-table-column>
             <el-table-column
@@ -68,11 +67,14 @@
                     show-overflow-tooltip
                     label="备注">
                 <template slot-scope="scope">
-                    <column-input :key="scope.$index" v-model="scope.row.remark"></column-input>
+                    <column-input :key="scope.$index" v-model="scope.row.remark" :canEditCell="canEditCell"></column-input>
                 </template>
             </el-table-column>
+
         </el-table>
         <el-button @click="isColumn=7">开启列编辑</el-button>
+        <el-button @click="edit">开启编辑</el-button>
+        <el-button @click="cancelEdit">取消编辑</el-button>
     </div>
 </template>
 
@@ -81,7 +83,8 @@
   import columnDate from './components/column-date'
   import columnSelect from './components/column-select'
   import columnTable from './components/column-table'
-
+  import MyInput from './components/my-input'
+  import MyCheckbox from './components/my-checkbox'
   export default {
     name: 'app',
     data() {
@@ -493,9 +496,15 @@
             "retailPrice": 26.08
           }
         ],
+          myValue:'2',
+          myValu1e:'2',
+          canEditCell:true
       }
     },
     methods: {
+        loadMore(){
+
+        },
       //row数据反写
       rowEnter(row, index, cellback) {
         this.$set(this.tableData, index, row);
@@ -506,9 +515,14 @@
         console.log(keyword)
       },
       editCell(value, index) {
-
         this.$set(this.tableData[0], "drugSpec", value);
-      }
+      },
+        edit(){
+            this.canEditCell = true;
+        },
+        cancelEdit(){
+            this.canEditCell = false;
+        }
     },
     computed: {
       options() {
@@ -1034,7 +1048,9 @@
       columnInput,
       columnDate,
       columnSelect,
-      columnTable
+      columnTable,
+        MyInput,
+        MyCheckbox
     }
   }
 </script>
@@ -1046,7 +1062,8 @@
         -moz-osx-font-smoothing: grayscale;
         /*text-align: center;*/
         color: #2c3e50;
-
+        height: 500px;
+        margin-top: 100px;
     }
 
     #app .el-table {

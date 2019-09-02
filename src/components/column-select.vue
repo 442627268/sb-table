@@ -42,6 +42,13 @@
           }
         }
       },
+        canEditCell:{
+            type:Boolean,
+            default:false
+        },
+        isColumn: {
+            type: [String, Boolean, Number]
+        },
     },
     data() {
       return {
@@ -54,28 +61,46 @@
     },
     methods: {
       dbEdit(flag) {
-        this.isEdit = flag;
-        if (flag) {
-          this.$nextTick(() => {
-            this.$refs.select.visible = true;
-            this.$refs.select.focus();
-            document.addEventListener("click",this.hidePanel,false)
-          })
-        }
+          if(this.canEditCell){
+              this.isEdit = flag;
+              if (flag) {
+                  this.$nextTick(() => {
+                      this.$refs.select.visible = true;
+                      this.$refs.select.focus();
+                      document.addEventListener("click",this.hidePanel,false)
+                  })
+              }
+          }
+
       },
       handleInput(e, flag) {
-        console.log(1111111111)
         if (flag) {
           this.isEdit = false;
           document.removeEventListener("click",this.hidePanel,false)
-          const uid = this._uid;
-          const childuid = this.$parent.$children.filter(value => value._uid == (uid + 1));
-          childuid.length && childuid[0].dbEdit(true)
+            let childuid = [];
+            if (this.isColumn) {
+                childuid = this.getChild(parseInt(this.isColumn))
+            } else {
+                childuid = this.getChild()
+            }
+            childuid.length && childuid[0].dbEdit(true);
         }
         this.valueStr = this.selectItem(e)
         this.currentValue = e;
         this.$emit("input", this.currentValue)
       },
+        getChild(val=1){
+            const uid = this._uid;
+            let childuid = this.$parent.$children.filter(value => value._uid == (uid + val));
+            if (!childuid.length) {
+                childuid = this.$parent.$children.filter(value => value._uid == (uid + val+1));
+            }
+            if(!childuid[0].canEditCell){//编辑
+                return this.getChild(++val);
+            }else{
+                return childuid;
+            }
+        },
       hidePanel(e) {
         if (!this.$refs.select.$el.contains(e.target)) {//点击除弹出层外的空白区域
           document.removeEventListener("click", this.hidePanel, false);

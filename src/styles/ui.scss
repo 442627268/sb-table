@@ -912,3 +912,9 @@ $marginPx: 2 4 6 8 10 16 24 32 40;
 .ui-visible-none{
   display: none;
 }
+.el-table td{
+  position: inherit;
+}
+.el-table__body-wrapper{
+  position: static;
+}

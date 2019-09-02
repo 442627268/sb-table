@@ -1,9 +1,6 @@
 # sb-table
 
-## Project setup
-```
-npm install
-```
+## 基于element ui table搭建的表格编辑
 
 ### Compiles and hot-reloads for development
 ```

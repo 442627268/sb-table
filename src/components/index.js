@@ -1,25 +1,48 @@
 /**
- * Created by renlinfei on 2019-08-22.
+ * Created by renlinfei on 2019-08-13.
  */
-import columnDate from './column-date'
-import columnInput from './column-input'
-import columnTable from './column-table'
-import columnSelect from './column-select'
-columnDate.install = (Vue) => {
-  Vue.component(columnDate.name, columnDate)
-}
-columnInput.install = (Vue) => {
-  Vue.component(columnInput.name, columnInput)
-}
-columnTable.install = (Vue) => {
-  Vue.component(columnTable.name, columnTable)
-}
-columnSelect.install = (Vue) => {
-  Vue.component(columnSelect.name, columnSelect)
-}
 export default {
-  columnDate,
-  columnInput,
-  columnTable,
-  columnSelect
+  data() {
+    return {
+      isEdit: false,
+      currentValue: this.value
+    }
+  },
+  props: {
+    isColumn: {
+      type: [String, Boolean, Number]
+    },
+  },
+  methods: {
+    handleInput(e, flag) {
+      if (flag) {
+        this.isEdit = false;
+        let childuid = [];
+        if (this.isColumn) {
+            childuid = this.getChild(parseInt(this.isColumn))
+        } else {
+          childuid = this.getChild()
+        }
+        childuid.length && childuid[0].dbEdit(true)
+      }
+      if (this.$listeners.editCell) {
+        this.$emit('editCell', e);
+        return
+      }
+      this.currentValue = e;
+      this.$emit("input", this.currentValue)
+    },
+      getChild(val=1){
+          const uid = this._uid;
+          let childuid = this.$parent.$children.filter(value => value._uid == (uid + val));
+          if (!childuid.length) {
+              childuid = this.$parent.$children.filter(value => value._uid == (uid + val+1));
+          }
+          if(!childuid[0].canEditCell){//编辑
+              return this.getChild(++val);
+          }else{
+              return childuid;
+          }
+      },
+  }
 }

@@ -5,7 +5,7 @@
     <div v-if="!isEdit" class="ui-w100 min-height nowrap" @dblclick="dbEdit(true)">
         {{value}}
     </div>
-    <div v-else class="ui-relative">
+    <div v-else>
         <el-input
                 ref="input"
                 :value="currentValue"
@@ -14,23 +14,24 @@
                 @keyup.enter.native="rowSelect(13)"
                 @keyup.40.native="rowSelect(40)">
         </el-input>
-        <div class="ui-absolute">
-            <el-table
-                    :data="columnData"
-                    @row-click="rowClick"
-                    highlight-current-row
-                    ref="singleTable"
-                    height="300px"
-                    style="width:450px">
-                <el-table-column show-overflow-tooltip v-for="(item,index) in column"
-                                 :prop="item.prop"
-                                 :key="index"
-                                 :align="item.align"
-                                 :label="item.label"
-                                 :width="item.width">
-                </el-table-column>
-            </el-table>
-        </div>
+        <el-table
+                :data="columnData"
+                v-if="isShow"
+                @row-click="rowClick"
+                highlight-current-row
+                ref="singleTable"
+                class="ui-absolute"
+                height="300px"
+                :style="styleObject"
+                style="width:450px;">
+            <el-table-column show-overflow-tooltip v-for="(item,index) in column"
+                             :prop="item.prop"
+                             :key="index"
+                             :align="item.align"
+                             :label="item.label"
+                             :width="item.width">
+            </el-table-column>
+        </el-table>
     </div>
 </template>
 
@@ -46,26 +47,57 @@
       },
       columnData: {
         type: Array
-      }
+      },
+      canEditCell: {
+        type: Boolean,
+        default: false
+      },
+      isColumn: {
+        type: [String, Boolean, Number]
+      },
     },
     data() {
       return {
         currentValue: this.value,
         isEdit: false,
+        isShow: false,
         activeIndex: 0,
+        popoverTable: '',
+        styleObject: {}
       }
     },
     methods: {
+      loadMore() {
+      },
       dbEdit(flag) {
-        this.isEdit = flag;
-        if (flag) {
-          setTimeout(() => {
-            this.$refs.input.focus();
-            document.addEventListener('click', this.hidePanel, false);
-            // 获取需要绑定的table
-            this.dom = this.$refs.singleTable.bodyWrapper;
-            this.dom.addEventListener("scroll", this.infinitescroll, false)
-          }, 300);
+        if (this.canEditCell) {
+          this.isEdit = flag;
+          if (flag) {
+            setTimeout(() => {
+              this.$refs.input.focus();
+              let inputCurrent=this.$refs.input.$el;
+              document.addEventListener('click', this.hidePanel, false);
+              //弹出表格的位置
+              //this.popoverTable = this.$refs.singleTable;
+              if (this.$parent.$el.clientHeight - this.$el.offsetParent.offsetTop < 300) {
+                this.styleObject = {
+                  top: inputCurrent.offsetTop-300+'px'
+                }
+              } else {
+                this.styleObject = {
+                  top: inputCurrent.offsetTop+32+"px"
+                }
+              }
+              this.isShow = true;
+              setTimeout(() => {
+                // 获取需要绑定的table
+                this.dom = this.$refs.singleTable.bodyWrapper;
+                this.dom.addEventListener("scroll", this.infinitescroll, false);
+              }, 0);
+            }, 0);
+          }
+
+
         }
       },
       infinitescroll() {
@@ -76,7 +108,7 @@
         // 变量scrollHeight是滚动条的总高度
         let scrollHeight = this.dom.scrollHeight || this.dom.scrollHeight;
         if (scrollTop + windowHeight + 50 > scrollHeight) {
-          this.$emit("infinitescroll", this.currentValue,true)
+          this.$emit("infinitescroll", this.currentValue, true)
         }
       },
       rowSelect(key) {
@@ -93,7 +125,6 @@
         }
       },
       rowClick(row) {
-        console.log(row)
         this.row = row;
         this.rowDataSet();
       },
@@ -101,9 +132,11 @@
         document.removeEventListener("click", this.hidePanel, false);
         document.removeEventListener("scroll", this.infinitescroll, false);
         this.$emit("rowEnter", this.row, val => {
-          this.handleInput(true);
+          this.$nextTick(()=>{
+            this.currentValue=this.value;
+            this.handleInput(true);
+          });
         });
-
       },
       //设置上下选中row并scroll到选中的位置
       setCurrentRow(row) {
@@ -113,19 +146,32 @@
         this.$refs.singleTable.setCurrentRow(row);
       },
       handleInput(flag) {
-        if (typeof flag=="boolean") {
-          const uid = this._uid;
-          let childuid = this.$parent.$children.filter(value => value._uid == (uid + 1));
-          if(!childuid.length){
-            childuid=this.$parent.$children.filter(value => value._uid == (uid + 2));
+        if (typeof flag == "boolean") {
+          let childuid = [];
+          if (this.isColumn) {
+            childuid = this.getChild(parseInt(this.isColumn))
+          } else {
+            childuid = this.getChild()
           }
           childuid.length && childuid[0].dbEdit(true);
           this.isEdit = false;
           return
         }
-        this.currentValue =flag;
-        this.$emit("input", this.currentValue);
-        this.$emit("infinitescroll", this.currentValue,false);
+        this.currentValue = flag;
+       // this.$emit("input", this.currentValue);
+        this.$emit("infinitescroll", this.currentValue, false);
+      },
+      getChild(val = 1) {
+        const uid = this._uid;
+        let childuid = this.$parent.$children.filter(value => value._uid == (uid + val));
+        if (!childuid.length) {
+          childuid = this.$parent.$children.filter(value => value._uid == (uid + val + 1));
+        }
+        if (!childuid[0].canEditCell) {//编辑
+          return this.getChild(++val);
+        } else {
+          return childuid;
+        }
       },
       hidePanel(e) {
         if (!this.$refs.input.$el.contains(e.target) && !this.$refs.singleTable.$el.contains(e.target)) {//点击除弹出层外的空白区域
@@ -138,11 +184,10 @@
     watch: {
       isEdit(val) {
         if (val && this.columnData.length) {
-          this.$nextTick(() => {
+          setTimeout(() => {
             this.row = this.columnData[0];
             this.setCurrentRow(this.row)
-          })
-
+          }, 0)
         }
       },
     }
@@ -165,5 +210,9 @@
         box-shadow: 0 2px 12px 0 rgba(0, 0, 0, .1);
         position: absolute;
         z-index: 100;
+    }
+
+    .el-table /deep/ {
+        max-width: none;
     }
 </style>

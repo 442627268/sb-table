@@ -22,7 +22,7 @@
 </template>
 
 <script>
-  import index from './mixin'
+  import index from './index'
 
   export default {
     name: "column-date",
@@ -30,6 +30,12 @@
     props: {
       value: {
         type: [String, Number]
+      },
+      isColumn: {
+        type: [String, Boolean, Number]
+      },
+      canEditCell: {
+        type: Boolean
       }
     },
     data() {
@@ -39,17 +45,31 @@
       dbEdit(flag) {
         this.isEdit = flag;
         if (flag) {
+
           this.$nextTick(() => {
             this.$refs.handlerDate.$refs.reference.focus();
           })
         } else {
           this.$emit("input", this.currentValue)
-          const uid = this._uid;
-          let childuid = this.$parent.$children.filter(value => value._uid == (uid + 1));
-          if(!childuid.length){
-            childuid=this.$parent.$children.filter(value => value._uid == (uid + 2));
+          let childuid = [];
+          if (this.isColumn) {
+            childuid = this.getChild(parseInt(this.isColumn))
+          } else {
+            childuid = this.getChild()
           }
-          childuid.length && childuid[0].dbEdit(true)
+          childuid.length && childuid[0].dbEdit(true);
+        }
+      },
+      getChild(val = 1) {
+        const uid = this._uid;
+        let childuid = this.$parent.$children.filter(value => value._uid == (uid + val));
+        if (!childuid.length) {
+          childuid = this.$parent.$children.filter(value => value._uid == (uid + val + 1));
+        }
+        if (!childuid[0].canEditCell) {//编辑
+          return this.getChild(++val);
+        } else {
+          return childuid;
         }
       },
       getdatatime() {
@@ -71,9 +91,9 @@
         return clock;
       },
     },
-    watch:{
-      isEdit(val){
-        if(val&&!this.currentValue){
+    watch: {
+      isEdit(val) {
+        if (val && !this.currentValue) {
           this.currentValue = this.getdatatime();
         }
       }
