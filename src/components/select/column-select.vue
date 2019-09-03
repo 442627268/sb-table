@@ -7,11 +7,15 @@
             {{valueStr}}
         </div>
         <div v-else>
-            <el-select @change="val=>handleInput(val,true)" ref="select" v-model="currentValue"
+            <el-select filterable
+                       :clearable="clearable"
+                       default-first-option
+                       :filter-method="localfilterMethod"
+                       @change="val=>handleInput(val,true)" ref="select" v-model="currentValue"
                        placeholder="请选择">
                 <el-option
-                        v-for="(item,index) in selectData"
-                        :key="index"
+                        v-for="item in copyselectData"
+                        :key="item[defaultItem.value]"
                         :label="item[defaultItem.label]"
                         :value="item[defaultItem.value]">
                 </el-option>
@@ -21,8 +25,10 @@
 </template>
 
 <script>
+  import mixin from './index'
   export default {
     name: "column-select",
+    mixins: [mixin],
     props: {
       selectData: {
         required: true,
@@ -33,6 +39,10 @@
       defaultStr: {
         type: [String, Number]
       },
+      clearable: {
+        type: [Boolean],
+        default: false,
+      },
       defaultItem: {
         type: Object,
         default: () => {
@@ -42,18 +52,19 @@
           }
         }
       },
-        canEditCell:{
-            type:Boolean,
-            default:false
-        },
-        isColumn: {
-            type: [String, Boolean, Number]
-        },
+      canEditCell: {
+        type: Boolean,
+        default: false
+      },
+      isColumn: {
+        type: [String, Boolean, Number]
+      },
     },
     data() {
       return {
         isEdit: false,
         valueStr: this.defaultStr,
+        copyselectData:this.selectData,
         currentValue: this.value
       }
     },
@@ -61,46 +72,46 @@
     },
     methods: {
       dbEdit(flag) {
-          if(this.canEditCell){
-              this.isEdit = flag;
-              if (flag) {
-                  this.$nextTick(() => {
-                      this.$refs.select.visible = true;
-                      this.$refs.select.focus();
-                      document.addEventListener("click",this.hidePanel,false)
-                  })
-              }
+        if (this.canEditCell) {
+          this.isEdit = flag;
+          if (flag) {
+            this.$nextTick(() => {
+              this.$refs.select.visible = true;
+              this.$refs.select.focus();
+              document.addEventListener("click", this.hidePanel, false)
+            })
           }
+        }
 
       },
       handleInput(e, flag) {
         if (flag) {
           this.isEdit = false;
-          document.removeEventListener("click",this.hidePanel,false)
-            let childuid = [];
-            if (this.isColumn) {
-                childuid = this.getChild(parseInt(this.isColumn))
-            } else {
-                childuid = this.getChild()
-            }
-            childuid.length && childuid[0].dbEdit(true);
+          document.removeEventListener("click", this.hidePanel, false)
+          let childuid = [];
+          if (this.isColumn) {
+            childuid = this.getChild(parseInt(this.isColumn))
+          } else {
+            childuid = this.getChild()
+          }
+          childuid.length && childuid[0].dbEdit(true);
         }
         this.valueStr = this.selectItem(e)
         this.currentValue = e;
         this.$emit("input", this.currentValue)
       },
-        getChild(val=1){
-            const uid = this._uid;
-            let childuid = this.$parent.$children.filter(value => value._uid == (uid + val));
-            if (!childuid.length) {
-                childuid = this.$parent.$children.filter(value => value._uid == (uid + val+1));
-            }
-            if(!childuid[0].canEditCell){//编辑
-                return this.getChild(++val);
-            }else{
-                return childuid;
-            }
-        },
+      getChild(val = 1) {
+        const uid = this._uid;
+        let childuid = this.$parent.$children.filter(value => value._uid == (uid + val));
+        if (!childuid.length) {
+          childuid = this.$parent.$children.filter(value => value._uid == (uid + val + 1));
+        }
+        if (!childuid[0].canEditCell) {//编辑
+          return this.getChild(++val);
+        } else {
+          return childuid;
+        }
+      },
       hidePanel(e) {
         if (!this.$refs.select.$el.contains(e.target)) {//点击除弹出层外的空白区域
           document.removeEventListener("click", this.hidePanel, false);

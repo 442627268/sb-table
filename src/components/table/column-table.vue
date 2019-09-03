@@ -36,6 +36,7 @@
 </template>
 
 <script>
+  import debounce from './debounce'
   export default {
     name: "column-table",
     props: {
@@ -96,8 +97,6 @@
               }, 0);
             }, 0);
           }
-
-
         }
       },
       infinitescroll() {
@@ -159,7 +158,9 @@
         }
         this.currentValue = flag;
        // this.$emit("input", this.currentValue);
-        this.$emit("infinitescroll", this.currentValue, false);
+        debounce(()=>{
+          this.$emit("infinitescroll", this.currentValue, false);
+        });
       },
       getChild(val = 1) {
         const uid = this._uid;

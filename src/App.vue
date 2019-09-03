@@ -81,8 +81,8 @@
 <script>
   import columnInput from './components/column-input'
   import columnDate from './components/column-date'
-  import columnSelect from './components/column-select'
-  import columnTable from './components/column-table'
+  import columnSelect from './components/select/column-select'
+  import columnTable from './components/table/column-table'
   import MyInput from './components/my-input'
   import MyCheckbox from './components/my-checkbox'
   export default {
@@ -535,7 +535,7 @@
             "tname": "完好",
             "selectType": "PUB_APPEARANCE_MODE",
             "tsort": 0,
-            "nameShort": ""
+            "nameShort": "WH"
           },
           {
             "isDefault": 2,
@@ -545,7 +545,7 @@
             "tname": "破损",
             "selectType": "PUB_APPEARANCE_MODE",
             "tsort": 0,
-            "nameShort": ""
+            "nameShort": "PS"
           },
           {
             "isDefault": 2,
@@ -555,7 +555,7 @@
             "tname": "轻微破损",
             "selectType": "PUB_APPEARANCE_MODE",
             "tsort": 0,
-            "nameShort": ""
+            "nameShort": "QWPS"
           }
         ]
       },
