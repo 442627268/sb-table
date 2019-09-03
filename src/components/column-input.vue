@@ -20,40 +20,42 @@
 </template>
 
 <script>
-  import index from './index'
+  import index from './utils/index'
+  import childNode from './utils/childNode'
 
   export default {
     name: "column-input",
-    mixins: [index],
+    mixins: [index,childNode],
     props: {
       value: {
         type: [String, Number]
       },
-        canEditCell:{
-            type:Boolean,
-            default:false
-        }
+      canEditCell: {
+        type: Boolean,
+        default: false
+      }
     },
     data() {
       return {}
     },
-    mounted(){
+    mounted() {
     },
     methods: {
       dbEdit(flag) {
-          if(this.canEditCell){
-              this.isEdit = flag;
-              if (flag) {
-                  setTimeout(()=>{
-                      this.$refs.input.focus();
-                  },300);
-              }
+        if (this.canEditCell) {
+          this.isEdit = flag;
+          if (flag) {
+            setTimeout(() => {
+              this.getUid();
+              this.$refs.input.focus();
+            }, 300);
           }
+        }
       },
     },
-    watch:{
-      value(val){
-        this.currentValue=val;
+    watch: {
+      value(val) {
+        this.currentValue = val;
         this.$emit("input", this.currentValue)
       }
     }

@@ -37,8 +37,10 @@
 
 <script>
   import debounce from './debounce'
+  import mixin from '../utils/childNode'
   export default {
     name: "column-table",
+    mixins:[mixin],
     props: {
       value: {
         type: [String, Number]
@@ -71,27 +73,30 @@
       loadMore() {
       },
       dbEdit(flag) {
+
         if (this.canEditCell) {
           this.isEdit = flag;
           if (flag) {
             setTimeout(() => {
+              this.getUid();
               this.$refs.input.focus();
-              let inputCurrent=this.$refs.input.$el;
+              let inputCurrent = this.$refs.input.$el;
               document.addEventListener('click', this.hidePanel, false);
               //弹出表格的位置
               //this.popoverTable = this.$refs.singleTable;
               if (this.$parent.$el.clientHeight - this.$el.offsetParent.offsetTop < 300) {
                 this.styleObject = {
-                  top: inputCurrent.offsetTop-300+'px'
+                  top: inputCurrent.offsetTop - 300 + 'px'
                 }
               } else {
                 this.styleObject = {
-                  top: inputCurrent.offsetTop+32+"px"
+                  top: inputCurrent.offsetTop + 32 + "px"
                 }
               }
               this.isShow = true;
               setTimeout(() => {
                 // 获取需要绑定的table
+                this.$emit("infinitescroll", this.currentValue?this.currentValue:"", false);
                 this.dom = this.$refs.singleTable.bodyWrapper;
                 this.dom.addEventListener("scroll", this.infinitescroll, false);
               }, 0);
@@ -131,8 +136,8 @@
         document.removeEventListener("click", this.hidePanel, false);
         document.removeEventListener("scroll", this.infinitescroll, false);
         this.$emit("rowEnter", this.row, val => {
-          this.$nextTick(()=>{
-            this.currentValue=this.value;
+          this.$nextTick(() => {
+            this.currentValue = this.value;
             this.handleInput(true);
           });
         });
@@ -146,34 +151,17 @@
       },
       handleInput(flag) {
         if (typeof flag == "boolean") {
-          let childuid = [];
-          if (this.isColumn) {
-            childuid = this.getChild(parseInt(this.isColumn))
-          } else {
-            childuid = this.getChild()
-          }
-          childuid.length && childuid[0].dbEdit(true);
+          this.childNode();
           this.isEdit = false;
           return
         }
         this.currentValue = flag;
-       // this.$emit("input", this.currentValue);
-        debounce(()=>{
+        // this.$emit("input", this.currentValue);
+        debounce(() => {
           this.$emit("infinitescroll", this.currentValue, false);
         });
       },
-      getChild(val = 1) {
-        const uid = this._uid;
-        let childuid = this.$parent.$children.filter(value => value._uid == (uid + val));
-        if (!childuid.length) {
-          childuid = this.$parent.$children.filter(value => value._uid == (uid + val + 1));
-        }
-        if (!childuid[0].canEditCell) {//编辑
-          return this.getChild(++val);
-        } else {
-          return childuid;
-        }
-      },
+
       hidePanel(e) {
         if (!this.$refs.input.$el.contains(e.target) && !this.$refs.singleTable.$el.contains(e.target)) {//点击除弹出层外的空白区域
           document.removeEventListener("click", this.hidePanel, false);

@@ -22,11 +22,12 @@
 </template>
 
 <script>
-  import index from './index'
+  import index from './utils/index'
+  import childNode from './utils/childNode'
 
   export default {
     name: "column-date",
-    mixins: [index],
+    mixins: [index,childNode],
     props: {
       value: {
         type: [String, Number]
@@ -45,31 +46,13 @@
       dbEdit(flag) {
         this.isEdit = flag;
         if (flag) {
-
           this.$nextTick(() => {
+            this.getUid();
             this.$refs.handlerDate.$refs.reference.focus();
           })
         } else {
           this.$emit("input", this.currentValue)
-          let childuid = [];
-          if (this.isColumn) {
-            childuid = this.getChild(parseInt(this.isColumn))
-          } else {
-            childuid = this.getChild()
-          }
-          childuid.length && childuid[0].dbEdit(true);
-        }
-      },
-      getChild(val = 1) {
-        const uid = this._uid;
-        let childuid = this.$parent.$children.filter(value => value._uid == (uid + val));
-        if (!childuid.length) {
-          childuid = this.$parent.$children.filter(value => value._uid == (uid + val + 1));
-        }
-        if (!childuid[0].canEditCell) {//编辑
-          return this.getChild(++val);
-        } else {
-          return childuid;
+          this.childNode();
         }
       },
       getdatatime() {

@@ -1,6 +1,7 @@
 <template>
     <div id="app">
         <el-table
+                ref="table"
                 :data="tableData"
                 style="width: 1200px">
             <el-table-column
@@ -17,7 +18,8 @@
                     label="药品名称"
                     width="180">
                 <template slot-scope="scope">
-                    <column-table :isColumn="isColumn" :key="scope.$index" @rowEnter="(row,cellback)=>rowEnter(row,scope.$index,cellback)"
+                    <column-table :isColumn="isColumn" :key="scope.$index"
+                                  @rowEnter="(row,cellback)=>rowEnter(row,scope.$index,cellback)"
                                   @infinitescroll="infinitescroll" :column="column" :columnData="columnData"
                                   v-model="scope.row.drugName" :canEditCell="canEditCell"></column-table>
                 </template>
@@ -39,7 +41,8 @@
                     label="列编辑">
                 <template slot-scope="scope">
                     <!--isColumn 开启列编辑 :isColumn="7"-->
-                    <column-input :key="scope.$index" :isColumn="isColumn" v-model="scope.row.drugCountryName" :canEditCell="canEditCell"></column-input>
+                    <column-input :key="scope.$index" :isColumn="isColumn" v-model="scope.row.drugCountryName"
+                                  :canEditCell="canEditCell"></column-input>
                 </template>
             </el-table-column>
             <el-table-column
@@ -67,12 +70,13 @@
                     show-overflow-tooltip
                     label="备注">
                 <template slot-scope="scope">
-                    <column-input :key="scope.$index" v-model="scope.row.remark" :canEditCell="canEditCell"></column-input>
+                    <column-input :key="scope.$index" @addRow="addRow" v-model="scope.row.remark"
+                                  :canEditCell="canEditCell"></column-input>
                 </template>
             </el-table-column>
-
         </el-table>
         <el-button @click="isColumn=7">开启列编辑</el-button>
+        <el-button @click="addTableData">添加行</el-button>
         <el-button @click="edit">开启编辑</el-button>
         <el-button @click="cancelEdit">取消编辑</el-button>
     </div>
@@ -83,13 +87,12 @@
   import columnDate from './components/column-date'
   import columnSelect from './components/select/column-select'
   import columnTable from './components/table/column-table'
-  import MyInput from './components/my-input'
-  import MyCheckbox from './components/my-checkbox'
+
   export default {
     name: 'app',
     data() {
       return {
-        isColumn:0,
+        isColumn: 0,
         tableData: [
           {
             "drugCode": 1275,
@@ -496,15 +499,17 @@
             "retailPrice": 26.08
           }
         ],
-          myValue:'2',
-          myValu1e:'2',
-          canEditCell:true
+        myValue: '2',
+        myValu1e: '2',
+        canEditCell: true
       }
     },
+    mounted(){
+      // for(var i=0;i<1000;i++){
+      //   this.tableData.push({})
+      // }
+    },
     methods: {
-        loadMore(){
-
-        },
       //row数据反写
       rowEnter(row, index, cellback) {
         this.$set(this.tableData, index, row);
@@ -517,12 +522,25 @@
       editCell(value, index) {
         this.$set(this.tableData[0], "drugSpec", value);
       },
-        edit(){
-            this.canEditCell = true;
-        },
-        cancelEdit(){
-            this.canEditCell = false;
-        }
+      addRow(cellback) {
+        this.tableData.push({});
+        cellback("ok")
+      },
+      addTableData(){
+        const children=this.$refs.table.$children;
+        const childlen=children[children.length-1].$children.length;
+        this.tableData.push({});
+        this.$nextTick(()=>{
+          const children1=this.$refs.table.$children;
+          children1[children.length-1].$children[childlen+1].dbEdit(true);
+        })
+      },
+      edit() {
+        this.canEditCell = true;
+      },
+      cancelEdit() {
+        this.canEditCell = false;
+      }
     },
     computed: {
       options() {
@@ -1049,8 +1067,6 @@
       columnDate,
       columnSelect,
       columnTable,
-        MyInput,
-        MyCheckbox
     }
   }
 </script>
