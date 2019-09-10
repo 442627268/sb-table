@@ -135,7 +135,7 @@
       rowDataSet() {
         document.removeEventListener("click", this.hidePanel, false);
         document.removeEventListener("scroll", this.infinitescroll, false);
-        this.$emit("rowEnter", this.row, val => {
+        this.$emit("rowEnter", this.row,() => {
           this.$nextTick(() => {
             this.currentValue = this.value;
             this.handleInput(true);

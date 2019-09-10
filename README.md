@@ -30,7 +30,7 @@ el-table 表格编辑
 ### 2.弹出的table支持底部加载更多，上下键选择，enter写入到当前行等等。
 ### 3.增加了表格最后一个编辑项编辑后 enter 添加一行。
 ### 4.组件内原来通过_uid来确认下一个要编辑的组件，改成通过组件下标index来确认下一个要编辑的组件
-
+![Alt text](https://github.com/442627268/sb-table/blob/master/src/assets/11.gif)
 ```javascript
 <template>
     <div id="app">
