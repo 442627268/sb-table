@@ -3,6 +3,7 @@
         <el-table
                 ref="table"
                 :data="tableData"
+                height="700px"
                 style="width: 1200px">
             <el-table-column
                     type="selection"
@@ -505,9 +506,9 @@
       }
     },
     mounted(){
-      // for(var i=0;i<1000;i++){
-      //   this.tableData.push({})
-      // }
+      for(var i=0;i<1000;i++){
+        this.tableData.push({})
+      }
     },
     methods: {
       //row数据反写
