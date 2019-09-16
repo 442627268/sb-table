@@ -506,9 +506,9 @@
       }
     },
     mounted(){
-      for(var i=0;i<1000;i++){
-        this.tableData.push({})
-      }
+      // for(var i=0;i<1000;i++){
+      //   this.tableData.push({})
+      // }
     },
     methods: {
       //row数据反写
