@@ -23,7 +23,6 @@
 <script>
   import index from './utils/index'
   import childNode from './utils/childNode'
-
   export default {
     name: "column-input",
     mixins: [index,childNode],
