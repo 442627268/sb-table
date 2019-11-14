@@ -2,8 +2,10 @@ import Vue from 'vue'
 import App from './App.vue'
 import ElementUI from 'element-ui'
 import './styles/style.scss'
-import loadmore from './directive/index'
-Vue.use(loadmore)
+// import index from './directive/index'
+import load from './directive/loadmore'
+// Vue.use(index)
+Vue.use(load)
 Vue.use(ElementUI,{
   size:'small'
 })

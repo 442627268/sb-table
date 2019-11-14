@@ -7,10 +7,11 @@
             {{valueStr}}
         </div>
         <div v-else>
-            <el-select filterable
+            <el-select
+                       size="mini"
                        :clearable="clearable"
-                       default-first-option
                        :filter-method="localfilterMethod"
+                       @visible-change="visibleChange"
                        @change="val=>handleInput(val,true)" ref="select" v-model="currentValue"
                        placeholder="请选择">
                 <el-option
@@ -48,8 +49,8 @@
         type: Object,
         default: () => {
           return {
-            value: "value",
-            label: "label"
+            value: "code",
+            label: "tname"
           }
         }
       },
@@ -72,19 +73,28 @@
     mounted() {
     },
     methods: {
+      //el-select 隐藏和显示时 触发
+      visibleChange(e){
+        console.log(e)
+        if(!e){
+          this.hidePanel(e);
+          this.isEdit=false;
+          this.childNode();
+        }
+      },
       dbEdit(flag) {
         if (this.canEditCell) {
           this.isEdit = flag;
           if (flag) {
-            this.$nextTick(() => {
+            setTimeout(() => {
              this.getUid();
               this.$refs.select.visible = true;
               this.$refs.select.focus();
+              this.selectData.length&&this.$refs.select.navigateOptions('next');
               document.addEventListener("click", this.hidePanel, false)
-            })
+            },100)
           }
         }
-
       },
       handleInput(e, flag) {
         if (flag) {
@@ -94,7 +104,8 @@
         }
         this.valueStr = this.selectItem(e)
         this.currentValue = e;
-        this.$emit("input", this.currentValue)
+        this.$emit("input", this.currentValue);
+        this.$emit('selectConfirm',this.currentValue)
       },
       hidePanel(e) {
         if (!this.$refs.select.$el.contains(e.target)) {//点击除弹出层外的空白区域
@@ -112,6 +123,11 @@
           }
         });
         return itemValue;
+      }
+    },
+    watch:{
+      isEdit(val){
+        val&&(this.copyselectData=JSON.parse(JSON.stringify(this.selectData)))
       }
     }
   }

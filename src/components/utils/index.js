@@ -13,8 +13,10 @@ export default {
       type: [String, Boolean, Number]
     },
   },
+
   methods: {
      handleInput(e, flag) {
+       console.log(e)
       if (flag) {
         this.isEdit = false;
         this.childNode();

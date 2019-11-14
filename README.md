@@ -2,29 +2,9 @@
 
 ## 基于element ui table搭建的表格编辑
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
-
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Run your tests
-```
-npm run test
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
-# [demo地址](https://github.com/442627268/sb-table "github地址")
+# [demo地址](https://442627268.github.io/sb-table/dist/index.html "demo地址")
 el-table 表格编辑
 ### 1.双击表格开启编辑，编辑完后 enter开启下一列编辑。
 ### 2.弹出的table支持底部加载更多，上下键选择，enter写入到当前行等等。

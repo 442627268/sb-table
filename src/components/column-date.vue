@@ -2,32 +2,31 @@
 * Created by renlinfei on 2019-08-13.
 */
 <template>
-    <div>
-        <div v-if="!isEdit" class="ui-w100 min-height" @dblclick="dbEdit(true)">
-            {{value}}
-        </div>
-        <div v-else>
-            <el-date-picker
-                    ref="handlerDate"
-                    v-model="currentValue"
-                    type="date"
-                    value="yyyy-MM-dd"
-                    @blur="dbEdit(false)"
-                    @change="handleInput"
-                    value-format="yyyy-MM-dd"
-                    placeholder="选择日期">
-            </el-date-picker>
-        </div>
+  <div>
+    <div v-if="!isEdit" class="ui-w100 min-height" @dblclick="dbEdit(true)">
+      {{value}}
     </div>
+    <div v-else>
+      <el-date-picker
+        ref="handlerDate"
+        v-model="currentValue"
+        type="date"
+        value="yyyy-MM-dd"
+        @blur="dbEdit(false)"
+        value-format="yyyy-MM-dd"
+        placeholder="选择日期">
+      </el-date-picker>
+    </div>
+  </div>
 </template>
 
 <script>
   import index from './utils/index'
   import childNode from './utils/childNode'
-
+  import moment from 'moment'
   export default {
     name: "column-date",
-    mixins: [index,childNode],
+    mixins: [index, childNode],
     props: {
       value: {
         type: [String, Number]
@@ -52,32 +51,25 @@
           })
         } else {
           this.$emit("input", this.currentValue)
-          this.childNode();
+          if (this.$listeners.editCell) {
+            this.$emit('editCell', this.currentValue,()=>{
+              this.childNode();
+            });
+          }else{
+            this.childNode();
+          }
+          //this.currentValue = e;
+
+
         }
-      },
-      getdatatime() {
-        this.ct_month = new Date();
-        //this.ct_month.setTime(this.ct_month.getTime() - 3600 * 1000 * 24 * 30);//获取上个月的日期（这一行去掉就是获取今天计算机上的日期了）
-        var now = this.ct_month;
-        var year = now.getFullYear(); //年
-        var month = now.getMonth() + 1; //月
-        var day = now.getDate(); //日
-        //var hh = now.getHours(); //时
-        //var mm = now.getMinutes(); //分
-        var clock = year + "-";
-        if (month < 10)
-          clock += "0";
-        clock += month + "-";
-        if (day < 10)
-          clock += "0";
-        clock += day + " ";
-        return clock;
       },
     },
     watch: {
       isEdit(val) {
-        if (val && !this.currentValue) {
-          this.currentValue = this.getdatatime();
+        if (val && !this.value) {
+          this.currentValue = moment().format("YYYY-MM-DD");// this.getdatatime();
+        }else if(val){
+          this.currentValue =this.value;
         }
       }
     }

@@ -2,8 +2,9 @@
     <div id="app">
         <el-table
                 ref="table"
-                :data="tableData"
+                :data="filteredData"
                 height="700px"
+                :data-size="tableData.length" v-loadmore="handelLoadmore"
                 style="width: 1200px">
             <el-table-column
                     type="selection"
@@ -125,6 +126,7 @@
             "drugSupplierCode": null,
             "dosageUnitCode": "000006",
             "rn": 1,
+            "appearance":1,
             "retailPrice": 146.48
           },
           {
@@ -502,15 +504,54 @@
         ],
         myValue: '2',
         myValu1e: '2',
-        canEditCell: true
+        canEditCell: true,
+        currentStartIndex: 0,
+        currentEndIndex: 20
       }
     },
     mounted(){
-      // for(var i=0;i<1000;i++){
-      //   this.tableData.push({})
-      // }
+      return;
+      for(var i=0;i<1000;i++){
+        this.tableData.push(
+          {
+            "drugCode": 1313,
+            "drugManufactCode": 1600554,
+            "drugFormName": "片剂",
+            "isBasicDrug": "1",
+            "purchasePrice": 26.08,
+            "disRetailPrice": 0.2608,
+            "dsUnitName": "盒",
+            "drugSpec": "25mg*100片/盒",
+            "dsUnitCode": "000104",
+            "drugSupplierName": null,
+            "drugClassName": "西药类",
+            "drugAlias": null,
+            "drugCountryCode": 100031,
+            "isBasicDrugName": "国家基本药物",
+            "drugTypeCode": 100002,
+            "dosageUnitName": "mg",
+            "disPurchasePrice": 0.2608,
+            "approvalDocumentNo": "国药准字H32022163",
+            "drugManufactName": "南京白敬宇制药有限责任公司",
+            "drugFormCode": 10047,
+            "drugBusiCode": "007Z99092",
+            "drugName": "盐酸多塞平片",
+            "drugTypeName": "普通",
+            "drugCountryName": "川外",
+            "drugIndicatorCode": 10001,
+            "drugSupplierCode": null,
+            "dosageUnitCode": "000006",
+            "rn": 13,
+            "retailPrice": 26.08
+          }
+        )
+      }
     },
     methods: {
+      handelLoadmore (currentStartIndex, currentEndIndex) {
+        this.currentStartIndex = currentStartIndex;
+        this.currentEndIndex = currentEndIndex;
+      },
       //row数据反写
       rowEnter(row, index, cellback) {
         this.$set(this.tableData, index, row);
@@ -544,6 +585,17 @@
       }
     },
     computed: {
+      filteredData () {
+        return this.tableData.filter((item, index) => {
+          if (index < this.currentStartIndex) {
+            return false;
+          } else if (index > this.currentEndIndex) {
+            return false;
+          } else {
+            return true;
+          }
+        });
+      },
       options() {
         return [
           {

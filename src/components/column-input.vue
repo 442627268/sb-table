@@ -9,6 +9,7 @@
         <div v-else>
             <el-input
                     ref="input"
+                    size="mini"
                     @keyup.enter.native="e=>handleInput(e.target.value,true)"
                     @blur="dbEdit(false)"
                     @input="handleInput"
@@ -33,6 +34,9 @@
       canEditCell: {
         type: Boolean,
         default: false
+      },
+      typeName:{
+        default:'number'
       }
     },
     data() {
@@ -49,6 +53,8 @@
               this.getUid();
               this.$refs.input.focus();
             }, 300);
+          }else{
+            this.$emit('editBlur',this.currentValue)
           }
         }
       },
